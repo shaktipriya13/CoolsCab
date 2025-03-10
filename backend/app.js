@@ -1,18 +1,29 @@
 const dotenv = require('dotenv');
-dotenv.config(); // Ensure .env is loaded before requiring other modules
+dotenv.config(); // Load environment variables
 
 const express = require('express');
 const cors = require('cors');
-const connectToDb = require('./db/db');
+const connectToDb = require('./db/db'); // Ensure this file exports a function properly
 const userRoutes = require('./routes/user.routes');
 
 const app = express();
 
+// Ensure connectToDb is a function before calling it
+if (typeof connectToDb !== 'function') {
+    console.error("connectToDb is not a function. Check your db/db.js file.");
+    process.exit(1);
+}
+
 // Connect to Database with Error Handling
-connectToDb().catch(err => {
-    console.error("Database connection failed:", err);
-    process.exit(1); // Exit process if DB connection fails
-});
+(async () => {
+    try {
+        await connectToDb();
+        console.log("Database connected successfully!");
+    } catch (err) {
+        console.error("Database connection failed:", err);
+        process.exit(1); // Exit process if DB connection fails
+    }
+})();
 
 // CORS Configuration: Allow all in development, restrict in production
 const corsOptions = {

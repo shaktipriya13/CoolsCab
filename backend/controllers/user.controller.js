@@ -9,9 +9,10 @@ module.exports.registerUser = async (req, res, next) => {
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
+        console.log(req.body);
 
         // Extract data from request body
-        const { fullname, email, password } = req.body;
+        const { fullname,email, password } = req.body;
 
         // Check if fullname is correctly formatted
         let firstname = "", lastname = "";
@@ -30,8 +31,8 @@ module.exports.registerUser = async (req, res, next) => {
 
         // Create user
         const user = await userService.createUser({
-            firstname,
-            lastname,
+            firstname: fullname.firstname,
+            lastname: fullname.lastname,
             email,
             password: hashedPassword
         });
